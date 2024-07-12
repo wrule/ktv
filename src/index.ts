@@ -1,3 +1,4 @@
+import fs from 'fs';
 import SQLite3, { Database, RunResult } from 'sqlite3';
 const sqlite3 = SQLite3.verbose();
 
@@ -76,6 +77,9 @@ function has(db: Database, key: string) {
 export default
 class KTVMap {
   public constructor(private readonly dbPath: string) {
+    if (!fs.existsSync(this.dbPath)) {
+
+    }
     this.db = new sqlite3.Database(this.dbPath);
   }
 
@@ -101,6 +105,10 @@ class KTVMap {
     return has(this.db, key);
   }
 }
+
+const DB_FILE_TEMPLATE = `
+
+`.trim();
 
 export
 async function hello() {
