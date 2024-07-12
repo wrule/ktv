@@ -2,21 +2,6 @@ import crypto from 'crypto';
 import SQLite3, { Database, RunResult } from 'sqlite3';
 
 export
-function add(db: Database, key: string, value: string) {
-  return new Promise<RunResult>((resolve, reject) => {
-    const time = Date.now();
-    db.run(
-      `INSERT INTO ktv(key, time, value) VALUES(?, ?, ?)`,
-      [key, time, value],
-      (result: RunResult, error: Error) => {
-        if (error) reject(error);
-        else resolve(result);
-      },
-    );
-  });
-}
-
-export
 function get(db: Database, key: string) {
   return new Promise<string>((resolve, reject) => {
     db.get(`SELECT value FROM ktv WHERE key = ?`, [key], (error: Error, row: any) => {
@@ -46,6 +31,21 @@ function set(db: Database, key: string, value: string) {
     const time = Date.now();
     db.run(
       `INSERT OR REPLACE INTO ktv(key, time, value) VALUES(?, ?, ?)`,
+      [key, time, value],
+      function (error: Error) {
+        if (error) reject(error);
+        else resolve(this);
+      },
+    );
+  });
+}
+
+export
+function add(db: Database, key: string, value: string) {
+  return new Promise<RunResult>((resolve, reject) => {
+    const time = Date.now();
+    db.run(
+      `INSERT INTO ktv(key, time, value) VALUES(?, ?, ?)`,
       [key, time, value],
       function (error: Error) {
         if (error) reject(error);
