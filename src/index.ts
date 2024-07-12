@@ -104,5 +104,6 @@ class KTVMap {
 
 export
 async function hello() {
-
+  const map = new KTVMap('test/ktv.db');
+  console.log(await map.has('jimao'));
 }
