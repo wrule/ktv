@@ -60,6 +60,20 @@ function get(db: Database, key: string) {
 }
 
 export
+function has(db: Database, key: string) {
+  return new Promise<boolean>((resolve, reject) => {
+    db.get(
+      `SELECT 1 FROM ktv WHERE key = ?`,
+      [key],
+      function (error: Error, row: any) {
+        if (error) reject(error);
+        else resolve(!!row);
+      },
+    );
+  });
+}
+
+export
 async function hello() {
   const sqlite3 = SQLite3.verbose();
   const db = new sqlite3.Database('test/ktv.db');
