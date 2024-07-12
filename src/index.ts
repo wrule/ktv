@@ -78,7 +78,7 @@ export default
 class KTVMap {
   public constructor(private readonly dbPath: string) {
     if (!fs.existsSync(this.dbPath)) {
-
+      fs.writeFileSync(this.dbPath, Buffer.from(DB_FILE_TEMPLATE, 'base64'));
     }
     this.db = new sqlite3.Database(this.dbPath);
   }
