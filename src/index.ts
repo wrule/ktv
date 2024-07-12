@@ -12,20 +12,6 @@ function get(db: Database, key: string) {
 }
 
 export
-function del(db: Database, key: string) {
-  return new Promise<RunResult>((resolve, reject) => {
-    db.run(
-      `DELETE FROM ktv WHERE key = key`,
-      [key],
-      (result: RunResult, error: Error) => {
-        if (error) reject(error);
-        else resolve(result);
-      },
-    );
-  });
-}
-
-export
 function set(db: Database, key: string, value: string) {
   return new Promise<RunResult>((resolve, reject) => {
     const time = Date.now();
@@ -54,6 +40,21 @@ function add(db: Database, key: string, value: string) {
     );
   });
 }
+
+export
+function del(db: Database, key: string) {
+  return new Promise<RunResult>((resolve, reject) => {
+    db.run(
+      `DELETE FROM ktv WHERE key = ?`,
+      [key],
+      function (error: Error) {
+        if (error) reject(error);
+        else resolve(this);
+      },
+    );
+  });
+}
+
 
 export
 async function hello() {
