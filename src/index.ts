@@ -47,9 +47,9 @@ function set(db: Database, key: string, value: string) {
     db.run(
       `INSERT OR REPLACE INTO ktv(key, time, value) VALUES(?, ?, ?)`,
       [key, time, value],
-      (result: RunResult, error: Error) => {
+      function (error: Error) {
         if (error) reject(error);
-        else resolve(result);
+        else resolve(this);
       },
     );
   });
@@ -70,6 +70,6 @@ async function hello() {
   //     console.log(row);
   //   });
   // });
-  console.log(await set(db, 'jimao', '大傻逼'));
+  console.log(await set(db, 'yzz', '大傻逼是我啊'));
   db.close();
 }
