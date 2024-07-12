@@ -47,11 +47,15 @@ function del(db: Database, key: string) {
 
 export
 function get(db: Database, key: string) {
-  return new Promise<string>((resolve, reject) => {
-    db.get(`SELECT value FROM ktv WHERE key = ?`, [key], (error: Error, row: any) => {
-      if (error) reject(error);
-      else resolve(row.value);
-    });
+  return new Promise<string | undefined>((resolve, reject) => {
+    db.get(
+      `SELECT value FROM ktv WHERE key = ?`,
+      [key],
+      function (error: Error, row: any) {
+        if (error) reject(error);
+        else resolve(row?.value);
+      },
+    );
   });
 }
 
@@ -70,6 +74,6 @@ async function hello() {
   //     console.log(row);
   //   });
   // });
-  console.log(await set(db, 'yzz', '大傻逼是我啊'));
+  console.log(await get(db, 'jimao'));
   db.close();
 }
