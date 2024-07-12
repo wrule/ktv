@@ -2,16 +2,6 @@ import crypto from 'crypto';
 import SQLite3, { Database, RunResult } from 'sqlite3';
 
 export
-function get(db: Database, key: string) {
-  return new Promise<string>((resolve, reject) => {
-    db.get(`SELECT value FROM ktv WHERE key = ?`, [key], (error: Error, row: any) => {
-      if (error) reject(error);
-      else resolve(row.value);
-    });
-  });
-}
-
-export
 function set(db: Database, key: string, value: string) {
   return new Promise<RunResult>((resolve, reject) => {
     const time = Date.now();
@@ -55,6 +45,15 @@ function del(db: Database, key: string) {
   });
 }
 
+export
+function get(db: Database, key: string) {
+  return new Promise<string>((resolve, reject) => {
+    db.get(`SELECT value FROM ktv WHERE key = ?`, [key], (error: Error, row: any) => {
+      if (error) reject(error);
+      else resolve(row.value);
+    });
+  });
+}
 
 export
 async function hello() {
