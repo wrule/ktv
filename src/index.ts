@@ -58,7 +58,7 @@ function set(db: Database, key: string, value: string) {
 export
 async function hello() {
   const sqlite3 = SQLite3.verbose();
-  const db = new sqlite3.Database('test/1.db');
+  const db = new sqlite3.Database('test/ktv.db');
   // db.serialize(() => {
   //   const stmt = db.prepare(`INSERT INTO ktv(key, time, value, mtime) VALUES(?, ?, ?, ?)`);
   //   for (let i = 0; i < 10; i++) {
@@ -70,6 +70,6 @@ async function hello() {
   //     console.log(row);
   //   });
   // });
-  console.log(await set(db, 'jimao', '大傻逼1'));
+  console.log(await set(db, 'jimao', '大傻逼'));
   db.close();
 }
