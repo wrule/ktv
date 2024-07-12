@@ -1,5 +1,5 @@
-import crypto from 'crypto';
 import SQLite3, { Database, RunResult } from 'sqlite3';
+const sqlite3 = SQLite3.verbose();
 
 export
 function set(db: Database, key: string, value: string) {
@@ -73,21 +73,36 @@ function has(db: Database, key: string) {
   });
 }
 
+export default
+class KTVMap {
+  public constructor(private readonly dbPath: string) {
+    this.db = new sqlite3.Database(this.dbPath);
+  }
+
+  public readonly db: Database;
+
+  public set(key: string, value: string) {
+    return set(this.db, key, value);
+  }
+
+  public add(key: string, value: string) {
+    return add(this.db, key, value);
+  }
+
+  public delete(key: string) {
+    return del(this.db, key);
+  }
+
+  public get(key: string) {
+    return get(this.db, key);
+  }
+
+  public has(key: string) {
+    return has(this.db, key);
+  }
+}
+
 export
 async function hello() {
-  const sqlite3 = SQLite3.verbose();
-  const db = new sqlite3.Database('test/ktv.db');
-  // db.serialize(() => {
-  //   const stmt = db.prepare(`INSERT INTO ktv(key, time, value, mtime) VALUES(?, ?, ?, ?)`);
-  //   for (let i = 0; i < 10; i++) {
-  //     stmt.run(crypto.randomUUID(), Date.now(), (i + 1).toString(), Date.now());
-  //   }
-  //   stmt.finalize();
 
-  //   db.each('SELECT * FROM ktv', (err, row: any) => {
-  //     console.log(row);
-  //   });
-  // });
-  console.log(await get(db, 'jimao'));
-  db.close();
 }
