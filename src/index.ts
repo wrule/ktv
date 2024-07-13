@@ -1,4 +1,6 @@
 import fs from 'fs';
+import crypto from 'crypto';
+import XJSON from '@wrule/xjson';
 import SQLite3, { Database, RunResult } from 'sqlite3';
 const sqlite3 = SQLite3.verbose();
 
@@ -71,6 +73,22 @@ function has(db: Database, key: string) {
         else resolve(!!row);
       },
     );
+  });
+}
+
+function hash(text: string) {
+  const hash = crypto.createHash('md5');
+  hash.update(text);
+  return hash.digest('base64');
+}
+
+export
+function setJSON(db: Database, key: string, value: any) {
+  const json = XJSON.stringify(value, (key, value) => {
+    if (typeof value === 'string' && value.length >= 64) {
+      const hashKey = hash(value);
+    }
+    return value;
   });
 }
 
