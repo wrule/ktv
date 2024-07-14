@@ -22,7 +22,7 @@
     "webpack-cli": "5.1.4"
   },
   "dependencies": {
-    "@wrule/xjson": "^0.2.0",
+    "@wrule/xjson": "^0.2.3",
     "sqlite3": "^5.1.7"
   }
 }

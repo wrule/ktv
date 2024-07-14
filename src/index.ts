@@ -1,6 +1,6 @@
 import fs from 'fs';
 import crypto from 'crypto';
-import XJSON from '@wrule/xjson';
+import '@wrule/xjson';
 import SQLite3, { Database, RunResult } from 'sqlite3';
 const sqlite3 = SQLite3.verbose();
 
@@ -77,19 +77,31 @@ function has(db: Database, key: string) {
 }
 
 function hash(text: string) {
-  const hash = crypto.createHash('md5');
+  const hash = crypto.createHash('sha256');
   hash.update(text);
   return hash.digest('base64');
 }
 
 export
-function setJSON(db: Database, key: string, value: any) {
-  const json = XJSON.stringify(value, (key, value) => {
-    if (typeof value === 'string' && value.length >= 64) {
-      const hashKey = hash(value);
+function setJSON(db: Database, key: string, object: any) {
+  const hashMap = new Map<string, string>();
+  const stringMap = new Map<string, string>();
+  const jsonText = JSON.xstringify(object, ((key: string, value: any) => {
+    if (typeof value === 'string') {
+      if (value.length >= 128) {
+        if (stringMap.has(value)) return stringMap.get(value);
+        else {
+          const hashId = hash(value);
+          stringMap.set(value, hashId);
+          hashMap.set(hashId, value);
+          return hashId;
+        }
+      }
     }
     return value;
-  });
+  }) as any);
+  console.log(jsonText);
+  // console.log(a);
 }
 
 export default
@@ -127,7 +139,11 @@ class KTVMap {
 export
 async function hello() {
   const map = new KTVMap('test/ktv.db');
-  console.log(await map.set('jimao', '新的数据库'));
+  setJSON(null as any, '', {
+    a: undefined,
+    text: Array(200).fill(0).map(() => 'a').join(''),
+  });
+  // console.log(await map.set('jimao', '新的数据库'));
 }
 
 const DB_FILE_TEMPLATE = `
