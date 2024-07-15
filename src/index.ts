@@ -90,15 +90,13 @@ async function setJSON(db: Database, key: string, object: any) {
   const hashMap = new Map<string, string>();
   const stringMap = new Map<string, string>();
   let jsonText = JSON.xstringify(object, ((key: string, value: any) => {
-    if (typeof value === 'string') {
-      if (value.length >= 32) {
-        if (stringMap.has(value)) return stringMap.get(value);
-        else {
-          const hashId = hash(value);
-          stringMap.set(value, hashId);
-          hashMap.set(hashId, value);
-          return hashId;
-        }
+    if (typeof value === 'string' && value.length >= 32) {
+      if (stringMap.has(value)) return stringMap.get(value);
+      else {
+        const hashId = hash(value);
+        stringMap.set(value, hashId);
+        hashMap.set(hashId, value);
+        return hashId;
       }
     }
     return value;
