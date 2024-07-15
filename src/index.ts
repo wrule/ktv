@@ -76,6 +76,7 @@ function has(db: Database, key: string) {
   });
 }
 
+export
 function hash(text: string) {
   const hash = crypto.createHash('sha256');
   hash.update(text);
@@ -83,7 +84,7 @@ function hash(text: string) {
 }
 
 export
-async function setJSON(db: Database, key: string, object: any) {
+async function set_xjson(db: Database, key: string, object: any) {
   const hashMap = new Map<string, string>();
   let jsonText = JSON.xstringify(object, (_, value) => {
     if (typeof value === 'string' && value.length >= 32) {
@@ -101,7 +102,7 @@ async function setJSON(db: Database, key: string, object: any) {
 }
 
 export
-async function getJSON(db: Database, key: string) {
+async function get_xjson(db: Database, key: string) {
   const jsonText = await get(db, key);
   if (jsonText === undefined) return undefined;
   const jsonObject = JSON.parse(jsonText);
@@ -202,6 +203,7 @@ function tryInsertHashValues(db: Database, hashValues: [string, string][]) {
   });
 }
 
+export
 async function saveHashValues(db: Database, hashValues: [string, string][]) {
   const hashes = hashValues.map(([hash]) => hash);
   const hashMap = new Map<string, string>(hashValues);
