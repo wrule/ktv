@@ -219,13 +219,13 @@ async function saveHashValues(db: Database, hashValues: [string, string][]) {
 export
 async function hello() {
   const map = new KTVMap('test/ktv.db');
-  await setJSON(map.db, 'ui', {
+  await setJSON(map.db, 'pk', {
     t: NaN,
     a: undefined,
     b: Array(200).fill(0).map(() => 't').join(''),
-    q: Array(1000).fill(0).map(() => 'p').join(''),
+    q: Array(1003).fill(0).map(() => 'p').join(''),
   })
-  console.log(await getJSON(map.db, 'ui'));
+  console.log(await getJSON(map.db, 'pk'));
   // console.log(await saveHashValues(map.db, [
   //   ['a1', 'b'],
   //   ['a', 'b'],
