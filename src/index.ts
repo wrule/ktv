@@ -197,14 +197,10 @@ async function saveHashValues(db: Database, hashValues: [string, string][]) {
 export
 async function hello() {
   const map = new KTVMap('test/ktv.db');
-  console.log(await insertHashes(map.db, new Map<string, string>([
+  console.log(await saveHashValues(map.db, [
     ['a1', 'b'],
     ['a', 'b'],
-    ['c', 'd'],
-    ['e', 'f'],
-    ['jimao', '111'],
-    ['kiss', 'ks'],
-  ])));
+  ]));
   // console.log(await queryIdByHashes(map.db, ['jimao', '12', 'df']));
   // insertHash(map.db, new Map<string, string>([['4', '1.1'], ['12', '2.2'], ['1', '999'], ['5', '5'], ['16', '991'], ['17', '991']]));
   // console.log(await map.set('jimao', '新的数据库'));
