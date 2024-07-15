@@ -149,13 +149,13 @@ function queryIdByHashes(db: Database, hashes: string[]) {
 }
 
 export
-function queryValueByIds(db: Database, ids: string[]) {
+function queryValueByIds(db: Database, ids: number[]) {
   return new Promise<Map<number, string>>((resolve, reject) => {
     const idsPlaceholder = ids.map(() => '?').join(', ');
     const selectValueSQL = `SELECT id, value FROM hash WHERE id IN (${idsPlaceholder});`;
     db.all(selectValueSQL, ids, function (error: Error, rows: any[]) {
       if (error) reject(error);
-      else resolve(new Map<number, string>(rows.map((row) => [row.id, row.hash])));
+      else resolve(new Map<number, string>(rows.map((row) => [row.id, row.value])));
     });
   });
 }
@@ -194,6 +194,7 @@ function insertHash(db: Database, hashMap: Map<string, string>) {
 export
 async function hello() {
   const map = new KTVMap('test/ktv.db');
+  console.log(await queryValueByIds(map.db, [33, 34, 9999]));
   // console.log(await queryIdByHashes(map.db, ['jimao', '12', 'df']));
   // insertHash(map.db, new Map<string, string>([['4', '1.1'], ['12', '2.2'], ['1', '999'], ['5', '5'], ['16', '991'], ['17', '991']]));
   // console.log(await map.set('jimao', '新的数据库'));
