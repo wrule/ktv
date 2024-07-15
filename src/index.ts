@@ -4,6 +4,9 @@ import '@wrule/xjson';
 import SQLite3, { Database, RunResult, Statement } from 'sqlite3';
 const sqlite3 = SQLite3.verbose();
 
+export const magicNum = 'xjson-28df-';
+export const xjson_ref = `${magicNum}-ref-`;
+
 export
 function set(db: Database, key: string, value: string) {
   return new Promise<RunResult>((resolve, reject) => {
@@ -83,10 +86,10 @@ function hash(text: string) {
 }
 
 export
-function setJSON(db: Database, key: string, object: any) {
+async function setJSON(db: Database, key: string, object: any) {
   const hashMap = new Map<string, string>();
   const stringMap = new Map<string, string>();
-  const jsonText = JSON.xstringify(object, ((key: string, value: any) => {
+  let jsonText = JSON.xstringify(object, ((key: string, value: any) => {
     if (typeof value === 'string') {
       if (value.length >= 128) {
         if (stringMap.has(value)) return stringMap.get(value);
@@ -100,8 +103,11 @@ function setJSON(db: Database, key: string, object: any) {
     }
     return value;
   }) as any);
-  console.log(jsonText);
-  // console.log(a);
+  const hashIdMap = await saveHashValues(db, Array.from(hashMap.entries()));
+  Array.from(hashIdMap.entries()).forEach(([hash, id]) => {
+    jsonText = jsonText.replaceAll(hash, xjson_ref + id);
+  });
+  return await set(db, key, jsonText);
 }
 
 export default
@@ -197,10 +203,15 @@ async function saveHashValues(db: Database, hashValues: [string, string][]) {
 export
 async function hello() {
   const map = new KTVMap('test/ktv.db');
-  console.log(await saveHashValues(map.db, [
-    ['a1', 'b'],
-    ['a', 'b'],
-  ]));
+  setJSON(map.db, 'ui', {
+    a: undefined,
+    b: Array(200).fill(0).map(() => 't').join(''),
+    q: Array(1000).fill(0).map(() => 'p').join(''),
+  })
+  // console.log(await saveHashValues(map.db, [
+  //   ['a1', 'b'],
+  //   ['a', 'b'],
+  // ]));
   // console.log(await queryIdByHashes(map.db, ['jimao', '12', 'df']));
   // insertHash(map.db, new Map<string, string>([['4', '1.1'], ['12', '2.2'], ['1', '999'], ['5', '5'], ['16', '991'], ['17', '991']]));
   // console.log(await map.set('jimao', '新的数据库'));
