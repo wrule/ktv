@@ -148,7 +148,7 @@ function insertHash(db: Database, hashMap: Map<string, string>) {
         else {
           const existingHashs = new Set<string>(rows.map((row) => row.hash));
           const newHashs = hashs.filter((hash) => !existingHashs.has(hash));
-          const insertHashSQL = newHashs.map((hash) => 
+          const insertHashSQL = newHashs.map((hash) =>
             `INSERT INTO hash (hash, value) VALUES ('${hash}', '${hashMap.get(hash)}') ON CONFLICT (hash) DO NOTHING;`
           ).join('\n');
           db.exec(insertHashSQL, function (error: Error | null) {
