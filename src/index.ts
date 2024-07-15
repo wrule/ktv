@@ -1,7 +1,7 @@
 import fs from 'fs';
 import crypto from 'crypto';
 import '@wrule/xjson';
-import SQLite3, { Database, RunResult } from 'sqlite3';
+import SQLite3, { Database, RunResult, Statement } from 'sqlite3';
 const sqlite3 = SQLite3.verbose();
 
 export
@@ -168,6 +168,19 @@ function queryHashByHashes(db: Database, hashes: string[]) {
     db.all(selectHashSQL, hashes, function (error: Error, rows: any[]) {
       if (error) reject(error);
       else resolve(new Set<string>(rows.map((row) => row.hash)));
+    });
+  });
+}
+
+export
+function tryInsertHashValues(db: Database, hashValues: [string, string][]) {
+  return new Promise<Statement>((resolve, reject) => {
+    const insertSQL = hashValues.map(([hash, value]) =>
+      `INSERT INTO hash (hash, value) VALUES ('${hash}', '${value}') ON CONFLICT (hash) DO NOTHING;`
+    ).join('\n');
+    db.exec(insertSQL, function (error: Error | null) {
+      if (error) reject(error);
+      else resolve(this);
     });
   });
 }
