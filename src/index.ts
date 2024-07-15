@@ -244,8 +244,8 @@ async function hello() {
   a[7].array[3] = a[7];
   a[13] = Symbol('desc');
   console.log(1, a);
-  await set_xjson(map.db, 'ddd', a);
-  console.log(await get_xjson(map.db, 'ddd'));
+  await map.set_xjson('ddd1', a);
+  console.log(await map.get_xjson('ddd1'));
   // console.log(await saveHashValues(map.db, [
   //   ['a1', 'b'],
   //   ['a', 'b'],
