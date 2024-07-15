@@ -162,12 +162,12 @@ function queryValueByIds(db: Database, ids: number[]) {
 
 export
 function queryHashByHashes(db: Database, hashes: string[]) {
-  return new Promise<Map<string, number>>((resolve, reject) => {
+  return new Promise<Set<string>>((resolve, reject) => {
     const hashesPlaceholder = hashes.map(() => '?').join(', ');
-    const selectIdSQL = `SELECT hash, id FROM hash WHERE hash IN (${hashesPlaceholder});`;
-    db.all(selectIdSQL, hashes, function (error: Error, rows: any[]) {
+    const selectHashSQL = `SELECT hash FROM hash WHERE hash IN (${hashesPlaceholder});`;
+    db.all(selectHashSQL, hashes, function (error: Error, rows: any[]) {
       if (error) reject(error);
-      else resolve(new Map<string, number>(rows.map((row) => [row.hash, row.id])));
+      else resolve(new Set<string>(rows.map((row) => row.hash)));
     });
   });
 }
