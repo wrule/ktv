@@ -85,7 +85,7 @@ function hash(text: string) {
 export
 async function setJSON(db: Database, key: string, object: any) {
   const hashMap = new Map<string, string>();
-  let jsonText = JSON.xstringify(object, (_, value: any) => {
+  let jsonText = JSON.xstringify(object, (_, value) => {
     if (typeof value === 'string' && value.length >= 32) {
       const hashId = hash(value);
       hashMap.set(hashId, value);
@@ -112,7 +112,7 @@ async function getJSON(db: Database, key: string) {
     return value;
   });
   const idValueMap = await queryValueByIds(db, Array.from(ids));
-  return JSON.xjson_de(jsonObject, (value: any) => {
+  return JSON.xjson_de(jsonObject, (value) => {
     if (typeof value === 'string' && value.startsWith(xjson_ref)) {
       const id = Number(value.slice(xjson_ref.length));
       if (idValueMap.has(id)) return idValueMap.get(id);
