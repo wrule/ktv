@@ -153,7 +153,13 @@ function insertHash(db: Database, hashMap: Map<string, string>) {
           ).join('\n');
           db.exec(insertHashSQL, function (error: Error | null) {
             if (error) reject(error);
-            else console.log(this);
+            else {
+              const selectIdSQL = `SELECT hash, id FROM hash WHERE hash IN (${hashsPlaceholder});`;
+              db.all(selectIdSQL, hashs, function (error: Error, rows: any[]) {
+                if (error) reject(error);
+                else console.log(rows);
+              });
+            }
           });
         }
       },
