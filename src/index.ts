@@ -186,30 +186,7 @@ function tryInsertHashValues(db: Database, hashValues: [string, string][]) {
 }
 
 function insertHash(db: Database, hashMap: Map<string, string>) {
-  return new Promise<Map<string, number>>((resolve, reject) => {
-    const hashs = Array.from(hashMap.keys());
-    const hashsPlaceholder = `${hashs.map(() => '?').join(', ')}`;
-    const selectHashSQL = `SELECT hash FROM hash WHERE hash IN (${hashsPlaceholder});`;
-    db.all(
-      selectHashSQL,
-      hashs, function (error: Error, rows: any[]) {
-        if (error) reject(error);
-        else {
-          const existingHashs = new Set<string>(rows.map((row) => row.hash));
-          const newHashs = hashs.filter((hash) => !existingHashs.has(hash));
-          const insertHashSQL = newHashs.map((hash) =>
-            `INSERT INTO hash (hash, value) VALUES ('${hash}', '${hashMap.get(hash)}') ON CONFLICT (hash) DO NOTHING;`
-          ).join('\n');
-          db.exec(insertHashSQL, async function (error: Error | null) {
-            if (error) reject(error);
-            else {
-              resolve(await queryIdByHashes(db, hashs));
-            }
-          });
-        }
-      },
-    );
-  });
+
 }
 
 export
