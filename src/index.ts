@@ -140,7 +140,7 @@ function insertHash(db: Database, hashMap: Map<string, string>) {
   return new Promise<void>((resolve, reject) => {
     const hashs = Array.from(hashMap.keys());
     const hashsPlaceholder = `${hashs.map(() => '?').join(', ')}`;
-    const selectHashSQL = `SELECT hash FROM hash WHERE hash IN (${hashsPlaceholder})`;
+    const selectHashSQL = `SELECT hash FROM hash WHERE hash IN (${hashsPlaceholder});`;
     db.all(
       selectHashSQL,
       hashs, function (error: Error, rows: any[]) {
@@ -148,10 +148,10 @@ function insertHash(db: Database, hashMap: Map<string, string>) {
         else {
           const existingHashs = new Set<string>(rows.map((row) => row.hash));
           const newHashs = hashs.filter((hash) => !existingHashs.has(hash));
-          const insertHashSQL = newHashs.map(() => 
-            `INSERT INTO hash (hash, value) VALUES (?, ?) ON CONFLICT (hash) DO NOTHING`
+          const insertHashSQL = newHashs.map((hash) => 
+            `INSERT INTO hash (hash, value) VALUES ('${hash}', '${hashMap.get(hash)}') ON CONFLICT (hash) DO NOTHING;`
           ).join('\n');
-          db.run(insertHashSQL, [], function (error: Error) {
+          db.exec(insertHashSQL, function (error: Error | null) {
             if (error) reject(error);
             else console.log(this);
           });
@@ -164,7 +164,7 @@ function insertHash(db: Database, hashMap: Map<string, string>) {
 export
 async function hello() {
   const map = new KTVMap('test/ktv.db');
-  insertHash(map.db, new Map<string, string>([['4', '1.1'], ['12', '2.2'], ['1', '999'], ['5', '5'], ['16', '991']]));
+  insertHash(map.db, new Map<string, string>([['4', '1.1'], ['12', '2.2'], ['1', '999'], ['5', '5'], ['16', '991'], ['17', '991']]));
   // console.log(await map.set('jimao', '新的数据库'));
 }
 
