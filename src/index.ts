@@ -137,7 +137,7 @@ class KTVMap {
 }
 
 function insertHash(db: Database, hashMap: Map<string, string>) {
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<Map<string, string>>((resolve, reject) => {
     const hashs = Array.from(hashMap.keys());
     const hashsPlaceholder = `${hashs.map(() => '?').join(', ')}`;
     const selectHashSQL = `SELECT hash FROM hash WHERE hash IN (${hashsPlaceholder});`;
@@ -157,7 +157,7 @@ function insertHash(db: Database, hashMap: Map<string, string>) {
               const selectIdSQL = `SELECT hash, id FROM hash WHERE hash IN (${hashsPlaceholder});`;
               db.all(selectIdSQL, hashs, function (error: Error, rows: any[]) {
                 if (error) reject(error);
-                else console.log(rows);
+                else resolve(new Map<string, string>(rows.map((row) => [row.hash, row.id])));
               });
             }
           });
