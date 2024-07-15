@@ -133,6 +133,14 @@ class KTVMap {
 
   public readonly db: Database;
 
+  public set_xjson(key: string, object: any) {
+    return set_xjson(this.db, key, object);
+  }
+
+  public get_xjson(key: string) {
+    return get_xjson(this.db, key);
+  }
+
   public set(key: string, value: string) {
     return set(this.db, key, value);
   }
