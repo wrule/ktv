@@ -185,7 +185,7 @@ function tryInsertHashValues(db: Database, hashValues: [string, string][]) {
   });
 }
 
-async function insertHash(db: Database, hashMap: Map<string, string>) {
+async function insertHashes(db: Database, hashMap: Map<string, string>) {
   const hashes = Array.from(hashMap.keys());
   const hashesSet = await queryHashByHashes(db, hashes);
   const newHashes = hashes.filter((hash) => !hashesSet.has(hash));
@@ -196,7 +196,14 @@ async function insertHash(db: Database, hashMap: Map<string, string>) {
 export
 async function hello() {
   const map = new KTVMap('test/ktv.db');
-  console.log(await queryHashByHashes(map.db, ['jimao', 'xxx', '12', 'uiui']));
+  console.log(await insertHashes(map.db, new Map<string, string>([
+    ['a1', 'b'],
+    ['a', 'b'],
+    ['c', 'd'],
+    ['e', 'f'],
+    ['jimao', '111'],
+    ['kiss', 'ks'],
+  ])));
   // console.log(await queryIdByHashes(map.db, ['jimao', '12', 'df']));
   // insertHash(map.db, new Map<string, string>([['4', '1.1'], ['12', '2.2'], ['1', '999'], ['5', '5'], ['16', '991'], ['17', '991']]));
   // console.log(await map.set('jimao', '新的数据库'));
