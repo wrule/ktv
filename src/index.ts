@@ -185,8 +185,9 @@ function tryInsertHashValues(db: Database, hashValues: [string, string][]) {
   });
 }
 
-async function insertHashes(db: Database, hashMap: Map<string, string>) {
-  const hashes = Array.from(hashMap.keys());
+async function saveHashValues(db: Database, hashValues: [string, string][]) {
+  const hashes = hashValues.map(([hash]) => hash);
+  const hashMap = new Map<string, string>(hashValues);
   const hashesSet = await queryHashByHashes(db, hashes);
   const newHashes = hashes.filter((hash) => !hashesSet.has(hash));
   await tryInsertHashValues(db, newHashes.map((hash) => [hash, hashMap.get(hash) as string]));
