@@ -214,8 +214,28 @@ async function saveHashValues(db: Database, hashValues: [string, string][]) {
 export
 async function hello() {
   const map = new KTVMap('test/ktv.db');
-  await setJSON(map.db, 'text', Buffer.from('1288228373622626272728374都觉得好的好的好的好的和123444844884', 'utf8'));
-  console.log(await getJSON(map.db, 'text'));
+  let a: any[] = [
+    1, 2, 3,
+    undefined, null, NaN, Symbol(),
+    {
+      n1: Infinity,
+      n2: -Infinity,
+      text: 'nihao',
+      emoji: '😄这是一个表情',
+      array: [1, null, ''],
+      now: new Date(),
+      bint: BigInt('2828172555111129938002282711233883141526'),
+      // json: '{"a": ""}',
+      // func: () => { console.log(Symbol('sm')); },
+    },
+    Buffer.from('1234', 'utf8'),
+  ];
+  a[10] = { a };
+  a[7].array[3] = a[7];
+  a[13] = Symbol('desc');
+  console.log(1, a);
+  await setJSON(map.db, 'ddd', a);
+  console.log(await getJSON(map.db, 'ddd'));
   // console.log(await saveHashValues(map.db, [
   //   ['a1', 'b'],
   //   ['a', 'b'],
