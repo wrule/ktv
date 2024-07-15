@@ -150,6 +150,14 @@ function queryIdByHashes(db: Database, hashes: string[]) {
 
 export
 function queryValueByIds(db: Database, ids: string[]) {
+  return new Promise<Map<string, number>>((resolve, reject) => {
+    const hashesPlaceholder = hashes.map(() => '?').join(', ');
+    const selectIdSQL = `SELECT hash, id FROM hash WHERE hash IN (${hashesPlaceholder});`;
+    db.all(selectIdSQL, hashes, function (error: Error, rows: any[]) {
+      if (error) reject(error);
+      else resolve(new Map<string, number>(rows.map((row) => [row.hash, row.id])));
+    });
+  });
 }
 
 function insertHash(db: Database, hashMap: Map<string, string>) {
