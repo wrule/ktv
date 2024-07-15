@@ -136,13 +136,27 @@ class KTVMap {
   }
 }
 
+function insertHash(db: Database, hashMap: Map<string, string>) {
+  return new Promise<void>((resolve, reject) => {
+    const hashs = Array.from(hashMap.keys());
+    const hashsPlaceholder = `${hashs.map(() => '?').join(', ')}`;
+    const selectHashSQL = `SELECT hash FROM hash WHERE hash IN (${hashsPlaceholder})`;
+    db.all(
+      selectHashSQL,
+      hashs, function (error: Error, rows: any[]) {
+        if (error) reject(error);
+        else {
+          
+        }
+      },
+    );
+  });
+}
+
 export
 async function hello() {
   const map = new KTVMap('test/ktv.db');
-  setJSON(null as any, '', {
-    a: undefined,
-    text: Array(200).fill(0).map(() => 'a').join(''),
-  });
+  insertHash(map.db, new Map<string, string>([['4', '1.1'], ['12', '2.2'], ['1', '999']]));
   // console.log(await map.set('jimao', '新的数据库'));
 }
 
