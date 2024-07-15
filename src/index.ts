@@ -161,7 +161,7 @@ function queryValueByIds(db: Database, ids: number[]) {
 }
 
 function insertHash(db: Database, hashMap: Map<string, string>) {
-  return new Promise<Map<string, string>>((resolve, reject) => {
+  return new Promise<Map<string, number>>((resolve, reject) => {
     const hashs = Array.from(hashMap.keys());
     const hashsPlaceholder = `${hashs.map(() => '?').join(', ')}`;
     const selectHashSQL = `SELECT hash FROM hash WHERE hash IN (${hashsPlaceholder});`;
@@ -175,14 +175,10 @@ function insertHash(db: Database, hashMap: Map<string, string>) {
           const insertHashSQL = newHashs.map((hash) =>
             `INSERT INTO hash (hash, value) VALUES ('${hash}', '${hashMap.get(hash)}') ON CONFLICT (hash) DO NOTHING;`
           ).join('\n');
-          db.exec(insertHashSQL, function (error: Error | null) {
+          db.exec(insertHashSQL, async function (error: Error | null) {
             if (error) reject(error);
             else {
-              const selectIdSQL = `SELECT hash, id FROM hash WHERE hash IN (${hashsPlaceholder});`;
-              db.all(selectIdSQL, hashs, function (error: Error, rows: any[]) {
-                if (error) reject(error);
-                else resolve(new Map<string, string>(rows.map((row) => [row.hash, row.id])));
-              });
+              resolve(await queryIdByHashes(db, hashs));
             }
           });
         }
