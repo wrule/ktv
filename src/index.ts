@@ -4,8 +4,8 @@ import { traverse } from '@wrule/xjson';
 import SQLite3, { Database, RunResult, Statement } from 'sqlite3';
 const sqlite3 = SQLite3.verbose();
 
-export const magicNum = 'xs-28df-';
-export const xjson_ref = `${magicNum}ref-`;
+export const magicNum = 'xjson-28df-';
+export const xjson_ref = `${magicNum}-ref-`;
 
 export
 function set(db: Database, key: string, value: string) {
@@ -113,16 +113,21 @@ async function getJSON(db: Database, key: string) {
   const jsonText = await get(db, key);
   if (jsonText === undefined) return undefined;
   const jsonObject = JSON.parse(jsonText);
-  const xjsonRefSet = new Set<string>();
+  const ids = new Set<number>();
   traverse(jsonObject, (value) => {
     if (typeof value === 'string' && value.startsWith(xjson_ref))
-      xjsonRefSet.add(value);
+      ids.add(Number(value.slice(xjson_ref.length)));
     return value;
   });
-  console.log(xjsonRefSet);
-  const xjsonRefIds = Array.from(xjsonRefSet).map((xjsonRef) => Number(xjsonRef.slice(xjson_ref.length)));
-  const q = await queryValueByIds(db, xjsonRefIds);
-  console.log(q);
+  const idValueMap = await queryValueByIds(db, Array.from(ids));
+  return JSON.xjson(jsonObject, (value: any) => {
+    if (typeof value === 'string' && value.startsWith(xjson_ref)) {
+      const id = Number(value.slice(xjson_ref.length));
+      if (idValueMap.has(id)) return idValueMap.get(id);
+    }
+    console.log(123, value);
+    return value;
+  });
 }
 
 export default
@@ -218,12 +223,13 @@ async function saveHashValues(db: Database, hashValues: [string, string][]) {
 export
 async function hello() {
   const map = new KTVMap('test/ktv.db');
-  // setJSON(map.db, 'ui', {
-  //   a: undefined,
-  //   b: Array(200).fill(0).map(() => 't').join(''),
-  //   q: Array(1000).fill(0).map(() => 'p').join(''),
-  // })
-  getJSON(map.db, 'ui');
+  setJSON(map.db, 'ui', {
+    t: NaN,
+    a: undefined,
+    b: Array(200).fill(0).map(() => 't').join(''),
+    q: Array(1000).fill(0).map(() => 'p').join(''),
+  })
+  console.log(await getJSON(map.db, 'ui'));
   // console.log(await saveHashValues(map.db, [
   //   ['a1', 'b'],
   //   ['a', 'b'],
