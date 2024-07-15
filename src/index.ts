@@ -115,7 +115,7 @@ async function getJSON(db: Database, key: string) {
   return JSON.xjson_de(jsonObject, (value) => {
     if (typeof value === 'string' && value.startsWith(xjson_ref)) {
       const id = Number(value.slice(xjson_ref.length));
-      if (idValueMap.has(id)) return idValueMap.get(id);
+      if (idValueMap.has(id)) return JSON.xjson_de(idValueMap.get(id));
     }
     return value;
   });
@@ -214,13 +214,8 @@ async function saveHashValues(db: Database, hashValues: [string, string][]) {
 export
 async function hello() {
   const map = new KTVMap('test/ktv.db');
-  await setJSON(map.db, 'pk', {
-    t: NaN,
-    a: undefined,
-    b: Array(200).fill(0).map(() => 't').join(''),
-    q: Array(1003).fill(0).map(() => 'p').join(''),
-  })
-  console.log(await getJSON(map.db, 'pk'));
+  await setJSON(map.db, 'text', 4892839473578372746237462535423542345n);
+  console.log(await getJSON(map.db, 'text'));
   // console.log(await saveHashValues(map.db, [
   //   ['a1', 'b'],
   //   ['a', 'b'],
