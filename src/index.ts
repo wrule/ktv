@@ -136,6 +136,18 @@ class KTVMap {
   }
 }
 
+export
+function queryIdByHashes(db: Database, hashes: string[]) {
+  return new Promise<Map<number, string>>((resolve, reject) => {
+    const hashesPlaceholder = `${hashes.map(() => '?').join(', ')}`;
+    const selectIdSQL = `SELECT hash, id FROM hash WHERE hash IN (${hashesPlaceholder});`;
+    db.all(selectIdSQL, hashes, function (error: Error, rows: any[]) {
+      if (error) reject(error);
+      else resolve(new Map<number, string>(rows.map((row) => [row.id, row.hash])));
+    });
+  });
+}
+
 function insertHash(db: Database, hashMap: Map<string, string>) {
   return new Promise<Map<string, string>>((resolve, reject) => {
     const hashs = Array.from(hashMap.keys());
