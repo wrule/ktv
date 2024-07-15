@@ -146,7 +146,9 @@ function insertHash(db: Database, hashMap: Map<string, string>) {
       hashs, function (error: Error, rows: any[]) {
         if (error) reject(error);
         else {
-          
+          const existingHashs = new Set<string>(rows.map((row) => row.hash));
+          const newHashs = hashs.filter((hash) => !existingHashs.has(hash));
+          console.log(newHashs);
         }
       },
     );
