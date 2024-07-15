@@ -1,11 +1,8 @@
 import fs from 'fs';
 import crypto from 'crypto';
-import { traverse } from '@wrule/xjson';
+import { traverse, xjson_ref } from '@wrule/xjson';
 import SQLite3, { Database, RunResult, Statement } from 'sqlite3';
 const sqlite3 = SQLite3.verbose();
-
-export const magicNum = 'xjson-28df-';
-export const xjson_ref = `${magicNum}-ref-`;
 
 export
 function set(db: Database, key: string, value: string) {
@@ -89,7 +86,7 @@ export
 async function setJSON(db: Database, key: string, object: any) {
   const hashMap = new Map<string, string>();
   const stringMap = new Map<string, string>();
-  let jsonText = JSON.xstringify(object, ((key: string, value: any) => {
+  let jsonText = JSON.xstringify(object, (_, value: any) => {
     if (typeof value === 'string' && value.length >= 32) {
       if (stringMap.has(value)) return stringMap.get(value);
       else {
@@ -100,7 +97,7 @@ async function setJSON(db: Database, key: string, object: any) {
       }
     }
     return value;
-  }) as any);
+  });
   const hashIdMap = await saveHashValues(db, Array.from(hashMap.entries()));
   Array.from(hashIdMap.entries()).forEach(([hash, id]) => {
     jsonText = jsonText.replaceAll(hash, xjson_ref + id);
@@ -134,7 +131,7 @@ export default
 class KTVMap {
   public constructor(private readonly dbPath: string) {
     if (!fs.existsSync(this.dbPath)) {
-      fs.writeFileSync(this.dbPath, Buffer.from(DB_FILE_TEMPLATE, 'base64'));
+      fs.writeFileSync(this.dbPath, Buffer.from('', 'base64'));
     }
     this.db = new sqlite3.Database(this.dbPath);
   }
