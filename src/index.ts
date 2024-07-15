@@ -85,16 +85,11 @@ function hash(text: string) {
 export
 async function setJSON(db: Database, key: string, object: any) {
   const hashMap = new Map<string, string>();
-  const stringMap = new Map<string, string>();
   let jsonText = JSON.xstringify(object, (_, value: any) => {
     if (typeof value === 'string' && value.length >= 32) {
-      if (stringMap.has(value)) return stringMap.get(value);
-      else {
-        const hashId = hash(value);
-        stringMap.set(value, hashId);
-        hashMap.set(hashId, value);
-        return hashId;
-      }
+      const hashId = hash(value);
+      hashMap.set(hashId, value);
+      return hashId;
     }
     return value;
   });
