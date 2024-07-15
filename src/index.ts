@@ -138,12 +138,12 @@ class KTVMap {
 
 export
 function queryIdByHashes(db: Database, hashes: string[]) {
-  return new Promise<Map<number, string>>((resolve, reject) => {
-    const hashesPlaceholder = `${hashes.map(() => '?').join(', ')}`;
+  return new Promise<Map<string, number>>((resolve, reject) => {
+    const hashesPlaceholder = hashes.map(() => '?').join(', ');
     const selectIdSQL = `SELECT hash, id FROM hash WHERE hash IN (${hashesPlaceholder});`;
     db.all(selectIdSQL, hashes, function (error: Error, rows: any[]) {
       if (error) reject(error);
-      else resolve(new Map<number, string>(rows.map((row) => [row.id, row.hash])));
+      else resolve(new Map<string, number>(rows.map((row) => [row.hash, row.id])));
     });
   });
 }
