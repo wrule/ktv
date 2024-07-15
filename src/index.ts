@@ -117,12 +117,11 @@ async function getJSON(db: Database, key: string) {
     return value;
   });
   const idValueMap = await queryValueByIds(db, Array.from(ids));
-  return JSON.xjson(jsonObject, (value: any) => {
+  return JSON.xjson_de(jsonObject, (value: any) => {
     if (typeof value === 'string' && value.startsWith(xjson_ref)) {
       const id = Number(value.slice(xjson_ref.length));
       if (idValueMap.has(id)) return idValueMap.get(id);
     }
-    console.log(123, value);
     return value;
   });
 }
@@ -220,7 +219,7 @@ async function saveHashValues(db: Database, hashValues: [string, string][]) {
 export
 async function hello() {
   const map = new KTVMap('test/ktv.db');
-  setJSON(map.db, 'ui', {
+  await setJSON(map.db, 'ui', {
     t: NaN,
     a: undefined,
     b: Array(200).fill(0).map(() => 't').join(''),
