@@ -201,12 +201,13 @@ function queryHashByHashes(db: Database, hashes: string[]) {
 
 export
 function tryInsertHashValues(db: Database, hashValues: [string, string][]) {
-  return new Promise<Statement>((resolve) => {
+  return new Promise<void>((resolve) => {
+    if (hashValues.length < 1) resolve();
     const stmt = db.prepare(`INSERT INTO hash (hash, value) VALUES (?, ?) ON CONFLICT (hash) DO NOTHING;`);
     let count = 0;
     hashValues.forEach((hashValue) => {
       stmt.run(hashValue, function () {
-        if (++count === hashValues.length) resolve(this);
+        if (++count === hashValues.length) resolve();
       });
     });
   });
@@ -225,28 +226,29 @@ async function saveHashValues(db: Database, hashValues: [string, string][]) {
 export
 async function hello() {
   const map = new KTVMap('test/ktv.db');
-  let a: any[] = [
-    1, 2, 3,
-    undefined, null, NaN, Symbol(),
-    {
-      n1: Infinity,
-      n2: -Infinity,
-      text: 'nihao',
-      emoji: '😄这是一个表情',
-      array: [1, null, ''],
-      now: new Date(),
-      bint: BigInt('2828172555111129938002282711233883141526'),
-      json: '{"a": ""}',
-      func: () => { console.log(Symbol('sm')); },
-    },
-    Buffer.from('1234', 'utf8'),
-  ];
-  a[10] = { a };
-  a[7].array[3] = a[7];
-  a[13] = Symbol('desc');
-  console.log(1, a);
-  await map.set_xjson('ddd1', a);
-  console.log(await map.get_xjson('ddd1'));
+  map.set_xjson('3', { });
+  // let a: any[] = [
+  //   1, 2, 3,
+  //   undefined, null, NaN, Symbol(),
+  //   {
+  //     n1: Infinity,
+  //     n2: -Infinity,
+  //     text: 'nihao',
+  //     emoji: '😄这是一个表情',
+  //     array: [1, null, ''],
+  //     now: new Date(),
+  //     bint: BigInt('2828172555111129938002282711233883141526'),
+  //     json: '{"a": ""}',
+  //     func: () => { console.log(Symbol('sm')); },
+  //   },
+  //   Buffer.from('1234', 'utf8'),
+  // ];
+  // a[10] = { a };
+  // a[7].array[3] = a[7];
+  // a[13] = Symbol('desc');
+  // console.log(1, a);
+  // await map.set_xjson('ddd1', a);
+  // console.log(await map.get_xjson('ddd1'));
   // console.log(await saveHashValues(map.db, [
   //   ['a1', 'b'],
   //   ['a', 'b'],
