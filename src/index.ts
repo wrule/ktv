@@ -201,16 +201,11 @@ function queryHashByHashes(db: Database, hashes: string[]) {
 
 export
 function tryInsertHashValues(db: Database, hashValues: [string, string][]) {
-  return new Promise<Statement>((resolve, reject) => {
-    const stmt = db.prepare(
-      `INSERT INTO hash (hash, value) VALUES (?, ?) ON CONFLICT (hash) DO NOTHING;`,
-      function (error: Error) {
-        if (error) reject(error);
-      },
-    );
+  return new Promise<Statement>((resolve) => {
+    const stmt = db.prepare(`INSERT INTO hash (hash, value) VALUES (?, ?) ON CONFLICT (hash) DO NOTHING;`);
     let count = 0;
     hashValues.forEach((hashValue) => {
-      stmt.run(hashValue, function (error: Error) {
+      stmt.run(hashValue, function () {
         if (++count === hashValues.length) resolve(this);
       });
     });
