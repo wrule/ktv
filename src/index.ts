@@ -1,6 +1,6 @@
 import fs from 'fs';
 import crypto from 'crypto';
-import { traverse, xjson_ref } from '@wrule/xjson';
+import { mapping_reverse, traverse, xjson_ref } from '@wrule/xjson';
 import SQLite3, { Database, RunResult, Statement } from 'sqlite3';
 import DB_FILE from './db_file';
 const sqlite3 = SQLite3.verbose();
@@ -117,7 +117,7 @@ async function get_xjson(db: Database, key: string) {
   return JSON.xjson_de(jsonObject, (value) => {
     if (typeof value === 'string' && value.startsWith(xjson_ref)) {
       const id = Number(value.slice(xjson_ref.length));
-      if (idValueMap.has(id)) return JSON.xjson_de(idValueMap.get(id));
+      if (idValueMap.has(id)) return mapping_reverse(idValueMap.get(id));
     }
     return value;
   });
