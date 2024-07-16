@@ -236,8 +236,8 @@ async function hello() {
       array: [1, null, ''],
       now: new Date(),
       bint: BigInt('2828172555111129938002282711233883141526'),
-      // json: '{"a": ""}',
-      // func: () => { console.log(Symbol('sm')); },
+      json: '{"a": ""}',
+      func: () => { console.log(Symbol('sm')); },
     },
     Buffer.from('1234', 'utf8'),
   ];
