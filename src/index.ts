@@ -85,10 +85,10 @@ function hash(text: string) {
 }
 
 export
-async function set_xjson(db: Database, key: string, object: any) {
+async function set_xjson(db: Database, key: string, object: any, limit = 128) {
   const hashMap = new Map<string, string>();
   let jsonText = JSON.xstringify(object, (_, value) => {
-    if (typeof value === 'string' && value.length >= 32) {
+    if (typeof value === 'string' && value.length >= limit) {
       const hashId = hash(value);
       hashMap.set(hashId, value);
       return hashId;
@@ -134,8 +134,8 @@ class KTVMap {
 
   public readonly db: Database;
 
-  public set_xjson(key: string, object: any) {
-    return set_xjson(this.db, key, object);
+  public set_xjson(key: string, object: any, limit = 128) {
+    return set_xjson(this.db, key, object, limit);
   }
 
   public get_xjson(key: string) {
