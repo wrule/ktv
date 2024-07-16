@@ -202,12 +202,17 @@ function queryHashByHashes(db: Database, hashes: string[]) {
 export
 function tryInsertHashValues(db: Database, hashValues: [string, string][]) {
   return new Promise<Statement>((resolve, reject) => {
-    const insertSQL = hashValues.map(([hash, value]) =>
-      `INSERT INTO hash (hash, value) VALUES ('${hash}', '${value}') ON CONFLICT (hash) DO NOTHING;`
-    ).join('\n');
-    db.exec(insertSQL, function (error: Error | null) {
-      if (error) reject(error);
-      else resolve(this);
+    const stmt = db.prepare(
+      `INSERT INTO hash (hash, value) VALUES (?, ?) ON CONFLICT (hash) DO NOTHING;`,
+      function (error: Error) {
+        if (error) reject(error);
+      },
+    );
+    let count = 0;
+    hashValues.forEach((hashValue) => {
+      stmt.run(hashValue, function (error: Error) {
+        if (++count === hashValues.length) resolve(this);
+      });
     });
   });
 }
