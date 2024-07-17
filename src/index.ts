@@ -178,6 +178,10 @@ class KTVMap {
   public has(key: string) {
     return has(this.db, key);
   }
+
+  public clean(keyPrefix?: string, expirationTime?: number) {
+    return clean(this.db, keyPrefix, expirationTime);
+  }
 }
 
 export
