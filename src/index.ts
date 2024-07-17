@@ -78,6 +78,19 @@ function has(db: Database, key: string) {
 }
 
 export
+function clean(db: Database, keyPrefix?: string, expirationTime?: number) {
+  return new Promise<RunResult>((resolve, reject) => {
+    keyPrefix = keyPrefix == null ? '%' : `${keyPrefix}%`;
+    expirationTime = expirationTime == null ? 0 : expirationTime;
+    const deleteSQL = `DELETE FROM ktv WHERE time < ? OR key LIKE ?`.trim();
+    db.run(deleteSQL, [expirationTime, keyPrefix], function (error: Error) {
+      if (error) reject(error);
+      else resolve(this);
+    });
+  });
+}
+
+export
 function hash(text: string) {
   const hash = crypto.createHash('sha256');
   hash.update(text);
