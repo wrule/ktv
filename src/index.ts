@@ -79,13 +79,14 @@ function has(db: Database, key: string) {
 
 export
 function clean(db: Database, keyPrefix?: string, expirationTime?: number) {
-  return new Promise<RunResult>((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
+    if (keyPrefix == null && expirationTime == null) resolve();
     keyPrefix = keyPrefix == null ? '%' : `${keyPrefix}%`;
     expirationTime = expirationTime == null ? 0 : expirationTime;
     const deleteSQL = `DELETE FROM ktv WHERE time < ? OR key LIKE ?`.trim();
     db.run(deleteSQL, [expirationTime, keyPrefix], function (error: Error) {
       if (error) reject(error);
-      else resolve(this);
+      else resolve();
     });
   });
 }
