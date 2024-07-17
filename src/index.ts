@@ -242,8 +242,9 @@ async function saveHashValues(db: Database, hashValues: [string, string][]) {
 
 export
 async function hello() {
-  const map = new KTVMap('test/ktv.db');
-  map.set_xjson('3', { });
+  const map = new KTVMap('test/xen.db');
+  clean(map.db, undefined, 1721191445248);
+  // map.set_xjson('3', { });
   // let a: any[] = [
   //   1, 2, 3,
   //   undefined, null, NaN, Symbol(),
