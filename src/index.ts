@@ -159,6 +159,16 @@ class KTVMap {
     return get_xjson(this.db, key);
   }
 
+  public set_xjson_p(key: string, object: any) {
+    return set(this.db, key, JSON.xstringify(object));
+  }
+
+  public async get_xjson_p(key: string) {
+    const xjson_text = await get(this.db, key);
+    if (xjson_text === undefined) return undefined;
+    return JSON.xparse(xjson_text);
+  }
+
   public set(key: string, value: string) {
     return set(this.db, key, value);
   }
