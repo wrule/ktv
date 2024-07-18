@@ -78,7 +78,7 @@ function has(db: Database, key: string) {
 }
 
 export
-function clean(db: Database, keyPrefix?: string, expirationTime?: number) {
+function clean(db: Database, keyPrefix?: string, expirationTime?: number, vacuum?: boolean) {
   return new Promise<void>((resolve, reject) => {
     if (keyPrefix == null && expirationTime == null) resolve();
     keyPrefix = keyPrefix == null ? '%' : `${keyPrefix}%`;
@@ -87,7 +87,7 @@ function clean(db: Database, keyPrefix?: string, expirationTime?: number) {
     db.run(deleteSQL, [expirationTime, keyPrefix], function (error: Error) {
       if (error) reject(error);
       else {
-        db.run('VACUUM;');
+        if (vacuum) db.run('VACUUM;');
         resolve();
       }
     });
@@ -189,8 +189,8 @@ class KTVMap {
     return has(this.db, key);
   }
 
-  public clean(keyPrefix?: string, expirationTime?: number) {
-    return clean(this.db, keyPrefix, expirationTime);
+  public clean(keyPrefix?: string, expirationTime?: number, vacuum?: boolean) {
+    return clean(this.db, keyPrefix, expirationTime, vacuum);
   }
 }
 
