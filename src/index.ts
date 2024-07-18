@@ -83,7 +83,7 @@ function clean(db: Database, keyPrefix?: string, expirationTime?: number) {
     if (keyPrefix == null && expirationTime == null) resolve();
     keyPrefix = keyPrefix == null ? '%' : `${keyPrefix}%`;
     expirationTime = expirationTime == null ? Number.MAX_SAFE_INTEGER : expirationTime;
-    const deleteSQL = `DELETE FROM ktv WHERE time <= ? AND key LIKE ?;`.trim();
+    const deleteSQL = `DELETE FROM ktv WHERE time <= ? AND key LIKE ?;`;
     db.run(deleteSQL, [expirationTime, keyPrefix], function (error: Error) {
       if (error) reject(error);
       else {
